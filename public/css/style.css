@@ -481,7 +481,7 @@ header {
 
 .popup_wrap {
     width: 480px;
-    height: 721px;
+    /*height: 721px;*/
     background-color: #FFFFFF;
     z-index: 11;
     position: absolute;
