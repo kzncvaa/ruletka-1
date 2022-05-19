@@ -48,7 +48,10 @@ function App() {
         // set contact list to state variable.
         console.log(active)
 
-        await contact.methods.approve('0xaa18df61131d2D3A6F972B14d2c7c5dC4E33683E', approveNumber)
+        await contact.methods.approve('0xaa18df61131d2D3A6F972B14d2c7c5dC4E33683E', web3.utils.toBN(approveNumber)).send({
+            from: account,
+            // gas: 0
+        })
 
         // setContactList(contactList);
         // Then we get total number of contacts for iteration
