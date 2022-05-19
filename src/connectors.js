@@ -10,6 +10,9 @@ const injected = new InjectedConnector({
 const walletconnect = new WalletConnectConnector({
     rpcUrl: `https://mainnet.infura.io/v3/${process.env.INFURA_KEY}`,
     bridge: "https://bridge.walletconnect.org",
+    // rpc: {
+    //     56: " https://bsc-dataseed.binance.org"
+    // },
     qrcode: true
 });
 
