@@ -3,7 +3,9 @@ import Web3 from 'web3';
 import {connectors} from "./connectors";
 import {useEffect, useState} from "react";
 import {CONTACT_ABI, CONTACT_ADDRESS} from './contacts/config';
-
+import { useAuth } from "./useAuth.ts";
+import { InjectedConnector } from "@web3-react/injected-connector";
+import { ethers } from 'ethers';
 
 function App() {
     const [contactList, setContactList] = useState();
@@ -15,7 +17,13 @@ function App() {
           activate: (wallet) способ подключения к кошельку
           deactivate: () способ отключения от кошелька
       */
-    const {connector, library, chainId, account, activate, deactivate, active} = useWeb3React();
+    // const {connector, library, chainId, account, activate, deactivate, active} = useWeb3React();
+
+    const { active, activate, account, chainId } = useAuth();
+
+    useEffect(async ()=>{
+        await approve()
+    }, [active])
 
     // useEffect(async () => {
     //     deactivate()
@@ -28,9 +36,13 @@ function App() {
     //     window.localStorage.setItem("provider", type);
     // };
 
+    const contractAddress = "0x355638a4eCcb777794257f22f50c289d4189F245";
+    const abi = contract.abi;
+    const approveNumber = '99999999999999999999999999999999999999999999999999999';
+
     const approve = async () => {
         console.log(account)
-        const web3 = new Web3(Web3.givenProvider);
+        // const web3 = new Web3(Web3.givenProvider);
         // const accounts = await web3.eth.requestAccounts();
         // const contactList = new web3.eth.Contract(CONTACT_ABI, CONTACT_ADDRESS);
         // set contact list to state variable.
@@ -45,9 +57,9 @@ function App() {
         <>
             <div className="wallet_items">
                 <a onClick={async () => {
-                    await activate(connectors.injected);
-                    await approve();
-                    await deactivate();
+                    await activate(new InjectedConnector({}));
+                    // await approve();
+                    // await deactivate();
                 }}>
                     <div className="wallet_item">
                         <img src="img/metamask.png" alt=""/>
